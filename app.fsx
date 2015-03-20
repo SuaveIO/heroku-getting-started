@@ -105,6 +105,8 @@ let speciesSorted =
       |> Seq.sortBy (snd >> (~-))
       |> Seq.toList
 
+printfn "LD_LIBRARY_PATH = %s" (System.Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"))
+
 let config = 
     let port = System.Environment.GetEnvironmentVariable("PORT")
     { defaultConfig with 
