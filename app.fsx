@@ -1,48 +1,36 @@
-(*
-
-//------------------------------------------
-// Step 0. Get the package bootstrap
-
-open System
-open System.IO
-
-Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-
-if not (File.Exists "paket.exe") then
-    let url = "https://github.com/fsprojects/Paket/releases/download/0.27.2/paket.exe"
-    use wc = new Net.WebClient()
-    let tmp = Path.GetTempFileName()
-    wc.DownloadFile(url, tmp)
-    File.Move(tmp,Path.GetFileName url);;
-
-// Step 1. Resolve and install the packages 
-
+#if BOOTSTRAP
+System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
+if not (System.IO.File.Exists "paket.exe") then let url = "https://github.com/fsprojects/Paket/releases/download/0.27.2/paket.exe" in use wc = new System.IO.Net.WebClient() in let tmp = System.IO.Path.GetTempFileName() in wc.DownloadFile(url, tmp); System.IO.File.Move(tmp,System.IO.Path.GetFileName url);;
 #r "paket.exe"
+Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
+#endif
 
-Paket.Dependencies.Install """
-    source https://nuget.org/api/v2
-    nuget Suave
-    nuget FSharp.Data 
-    nuget FSharp.Charting
-""";;
+//---------------------------------------------------------------------
 
-*)
-
-printfn "starting..."
 #I "packages/Suave/lib/net40"
 #r "packages/Suave/lib/net40/Suave.dll"
 #I "packages/FSharp.Data/lib/net40"
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
-//#r "packages/FSharp.Charting/lib/net40/FSharp.Charting.dll"
 
-//let ctxt = FSharp.Data.WorldBankData.GetDataContext()
-
-//let data = ctxt.Countries.Algeria.Indicators.``GDP (current US$)``
-
+open FSharp.Data
 open Suave                 // always open suave
 open Suave.Http.Successful // for OK-result
 open Suave.Web             // for config
 open Suave.Types             
+
+printfn "initializing script..."
+
+type Species = HtmlProvider<"http://en.wikipedia.org/wiki/The_world's_100_most_threatened_species">
+
+let species = 
+    [ for x in Species.GetSample().Tables.``Species list``.Rows -> 
+        x.Type, x.``Common name`` ]
+
+let speciesSorted = 
+    species 
+      |> Seq.countBy fst 
+      |> Seq.sortBy (snd >> (~-))
+      |> Seq.toList
 
 let config = 
     let port = System.Environment.GetEnvironmentVariable("PORT")
@@ -51,13 +39,16 @@ let config =
         bindings=[ (if port = null then HttpBinding.mk' HTTP  "localhost" 8080
                     else HttpBinding.mk' HTTP  "0.0.0.0" (int32 port)) ] }
 
-//let startWebServer c rsp = async { do webServer c rsp } |> Async.Start
-
-
+let text = 
+    [ yield "<html><body><ul>"
+      for (category,count) in speciesSorted do
+         yield sprintf "<li>Category <b>%s</b>: <b>%d</b></li>" category count 
+      yield "</ul></body></html>" ]
+    |> String.concat "\n"
 
 let angularHeader = """<head>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 </head>"""
 
 let fancyText = 
@@ -67,7 +58,7 @@ let fancyText =
       yield """  <table class="table table-striped">"""
       yield """   <thead><tr><th>Category</th><th>Count</th></tr></thead>"""
       yield """   <tbody>"""
-      for (category,count) in [ "abc", 100 ] do
+      for (category,count) in speciesSorted do
          yield sprintf "<tr><td>%s</td><td>%d</td></tr>" category count 
       yield """   </tbody>"""
       yield """  </table>"""
@@ -75,11 +66,9 @@ let fancyText =
       yield """</html>""" ]
     |> String.concat "\n"
 
-printfn "starting server..."
-eprintfn "starting server (err)..."
+printfn "starting web server..."
 
 startWebServer config (OK fancyText)
 printfn "exiting server..."
-eprintfn "exiting server (err)..."
 
 
