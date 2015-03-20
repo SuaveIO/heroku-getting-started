@@ -1,6 +1,6 @@
 #if BOOTSTRAP
 System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-if not (System.IO.File.Exists "paket.exe") then let url = "https://github.com/fsprojects/Paket/releases/download/0.27.2/paket.exe" in use wc = new System.IO.Net.WebClient() in let tmp = System.IO.Path.GetTempFileName() in wc.DownloadFile(url, tmp); System.IO.File.Move(tmp,System.IO.Path.GetFileName url);;
+if not (System.IO.File.Exists "paket.exe") then let url = "https://github.com/fsprojects/Paket/releases/download/0.27.2/paket.exe" in use wc = new System.Net.WebClient() in let tmp = System.IO.Path.GetTempFileName() in wc.DownloadFile(url, tmp); System.IO.File.Move(tmp,System.IO.Path.GetFileName url);;
 #r "paket.exe"
 Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 #endif
@@ -9,11 +9,13 @@ Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 
 #I "packages/Suave/lib/net40"
 #r "packages/Suave/lib/net40/Suave.dll"
-#I "packages/FSharp.Data/lib/net40"
+//#I "packages/FSharp.Data/lib/net40"
 //#r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 //
 //open FSharp.Data
 open Suave                 // always open suave
+open Suave.Http
+open Suave.Http.Applicatives
 open Suave.Http.Successful // for OK-result
 open Suave.Web             // for config
 open Suave.Types             
@@ -105,13 +107,12 @@ let speciesSorted =
       |> Seq.sortBy (snd >> (~-))
       |> Seq.toList
 
-printfn "LD_LIBRARY_PATH = %s" (System.Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"))
 
 let config = 
     let port = System.Environment.GetEnvironmentVariable("PORT")
     { defaultConfig with 
         logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
-        bindings=[ (if port = null then HttpBinding.mk' HTTP  "localhost" 8080
+        bindings=[ (if port = null then HttpBinding.mk' HTTP  "127.0.0.1" 8080
                     else HttpBinding.mk' HTTP  "0.0.0.0" (int32 port)) ] }
 
 let text = 
@@ -126,10 +127,11 @@ let angularHeader = """<head>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 </head>"""
 
-let fancyText = 
+let animalsText = 
     [ yield """<html>"""
       yield angularHeader
       yield """ <body>"""
+      yield """ <h1>Endangered Animals</h1>"""
       yield """  <table class="table table-striped">"""
       yield """   <thead><tr><th>Category</th><th>Count</th></tr></thead>"""
       yield """   <tbody>"""
@@ -141,9 +143,89 @@ let fancyText =
       yield """</html>""" ]
     |> String.concat "\n"
 
+let thingsText n = 
+    [ yield """<html>"""
+      yield angularHeader
+      yield """ <body>"""
+      yield """ <h1>Endangered Animals</h1>"""
+      yield """  <table class="table table-striped">"""
+      yield """   <thead><tr><th>Thing</th><th>Value</th></tr></thead>"""
+      yield """   <tbody>"""
+      for i in 1 .. n do
+         yield sprintf "<tr><td>Thing %d</td><td>%d</td></tr>" i i  
+      yield """   </tbody>"""
+      yield """  </table>"""
+      yield """ </body>""" 
+      yield """</html>""" ]
+    |> String.concat "\n"
+
+let homePage = 
+    [ yield """<html>"""
+      yield angularHeader 
+      yield """ <body>"""
+      yield """ <h1>Sample Web App</h1>"""
+      yield """  <table class="table table-striped">"""
+      yield """   <thead><tr><th>Page</th><th>Link</th></tr></thead>"""
+      yield """   <tbody>"""
+      yield """      <tr><td>Endangered Animals</td><td><a href="/animals">Link to animals</a></td></tr>""" 
+      yield """      <tr><td>Things</td><td><a href="/things/10">Link to things (10)</a></td></tr>""" 
+      yield """      <tr><td>Things</td><td><a href="/things/100">Link to things (100)</a></td></tr>""" 
+      yield """      <tr><td>API JSON</td><td><a href="/api/json/100">Link to result (100)</a></td></tr>"""
+      yield """      <tr><td>API XML</td><td><a href="/api/xml/100">Link to result (100)</a></td></tr>"""
+      yield """      <tr><td>API JSON</td><td><a href="/api/json/10">Link to result (10)</a></td></tr>"""
+      yield """      <tr><td>API XML</td><td><a href="/api/xml/10">Link to result (10)</a></td></tr>"""
+      yield """      <tr><td>Goodbye</td><td><a href="/goodbye">Link</a></td></tr>"""
+      yield """   </tbody>"""
+      yield """  </table>"""
+      yield """ </body>""" 
+      yield """</html>""" ]
+    |> String.concat "\n"
+
 printfn "starting web server..."
 
-startWebServer config (OK fancyText)
+let jsonText n = 
+    """
+{"menu": {
+  "id": "file",
+  "value": "File",
+  "popup": {
+    "result": [
+""" + String.concat "\n"
+      [ for i in 1 .. n -> sprintf """{"value": "%d"},""" i ] + """
+    ]
+  }
+}}""" 
+
+let xmlText n = 
+    """
+<menu id="file" value="File">
+  <popup>
+""" + String.concat "\n"
+      [ for i in 1 .. n -> sprintf """<menuitem value="%d" />""" i ] + """
+    <menuitem value="Open" />
+    <menuitem value="Close"  />
+  </popup>
+</menu>""" 
+
+let xmlMime = Writers.setMimeType "application/xml"
+let jsonMime = Writers.setMimeType "application/json"
+let app = 
+  choose
+    [ GET >>= choose
+                [ path "/" >>= OK homePage
+                  path "/animals" >>= OK animalsText
+                  pathScan "/things/%d" (fun n -> OK (thingsText n))
+                  path "/api/json" >>= jsonMime >>= OK (jsonText 100)
+                  pathScan "/api/json/%d" (fun n -> jsonMime >>= OK (jsonText n))
+                  path "/api/xml" >>= xmlMime >>= OK (xmlText 100)
+                  pathScan "/api/xml/%d" (fun n -> xmlMime >>= OK (xmlText n))
+                  path "/goodbye" >>= OK "Good bye GET" ]
+      POST >>= choose
+                [ path "/hello" >>= OK "Hello POST"
+                  path "/goodbye" >>= OK "Good bye POST" ] ]
+    
+
+startWebServer config app
 printfn "exiting server..."
 
 
