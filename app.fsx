@@ -30,7 +30,7 @@ Paket.Dependencies.Install """
 
 #r "packages/Suave/lib/net40/Suave.dll"
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
-#r "packages/FSharp.Charting/lib/net40/FSharp.Charting.dll"
+//#r "packages/FSharp.Charting/lib/net40/FSharp.Charting.dll"
 
 //let ctxt = FSharp.Data.WorldBankData.GetDataContext()
 
