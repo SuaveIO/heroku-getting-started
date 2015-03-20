@@ -43,9 +43,11 @@ open Suave.Web             // for config
 open Suave.Types             
 
 let config = 
+    let port = System.Environment.GetEnvironmentVariable("PORT")
     { defaultConfig with 
         logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
-        bindings=[ HttpBinding.mk' HTTP  "0.0.0.0" 5000 ] }
+        bindings=[ (if port = null then HttpBinding.mk' HTTP  "localhost" 8080
+                    else HttpBinding.mk' HTTP  "0.0.0.0" (int32 port)) ] }
 
 //let startWebServer c rsp = async { do webServer c rsp } |> Async.Start
 
