@@ -1,1 +1,1 @@
-web: mono app.exe
+web: fsharpi_heroku app.fsx
