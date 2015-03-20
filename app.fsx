@@ -1,6 +1,6 @@
 #if BOOTSTRAP
 System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-if not (System.IO.File.Exists "paket.exe") then let url = "https://github.com/fsprojects/Paket/releases/download/0.27.2/paket.exe" in use wc = new System.IO.Net.WebClient() in let tmp = System.IO.Path.GetTempFileName() in wc.DownloadFile(url, tmp); System.IO.File.Move(tmp,System.IO.Path.GetFileName url);;
+if not (System.IO.File.Exists "paket.exe") then let url = "https://github.com/fsprojects/Paket/releases/download/0.27.2/paket.exe" in use wc = new System.Net.WebClient() in let tmp = System.IO.Path.GetTempFileName() in wc.DownloadFile(url, tmp); System.IO.File.Move(tmp,System.IO.Path.GetFileName url);;
 #r "paket.exe"
 Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 #endif
@@ -9,7 +9,7 @@ Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 
 #I "packages/Suave/lib/net40"
 #r "packages/Suave/lib/net40/Suave.dll"
-#I "packages/FSharp.Data/lib/net40"
+//#I "packages/FSharp.Data/lib/net40"
 //#r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 //
 //open FSharp.Data
@@ -107,7 +107,6 @@ let speciesSorted =
       |> Seq.sortBy (snd >> (~-))
       |> Seq.toList
 
-printfn "LD_LIBRARY_PATH = %s" (System.Environment.GetEnvironmentVariable("LD_LIBRARY_PATH"))
 
 let config = 
     let port = System.Environment.GetEnvironmentVariable("PORT")
@@ -153,7 +152,7 @@ let thingsText n =
       yield """   <thead><tr><th>Thing</th><th>Value</th></tr></thead>"""
       yield """   <tbody>"""
       for i in 1 .. n do
-         yield sprintf "<tr><td>Thing %d</td><td>%d</td></tr>" n n 
+         yield sprintf "<tr><td>Thing %d</td><td>%d</td></tr>" i i  
       yield """   </tbody>"""
       yield """  </table>"""
       yield """ </body>""" 
@@ -206,16 +205,18 @@ let xmlText n =
   </popup>
 </menu>""" 
 
+let xmlMime = Writers.setMimeType "application/xml"
+let jsonMime = Writers.setMimeType "application/json"
 let app = 
   choose
     [ GET >>= choose
                 [ path "/" >>= OK homePage
                   path "/animals" >>= OK animalsText
                   pathScan "/things/%d" (fun n -> OK (thingsText n))
-                  path "/api/json" >>= OK (jsonText 100)
-                  pathScan "/api/json/%d" (fun n -> OK (jsonText n))
-                  path "/api/xml" >>= OK (xmlText 100)
-                  pathScan "/api/xml/%d" (fun n -> OK (xmlText n))
+                  path "/api/json" >>= jsonMime >>= OK (jsonText 100)
+                  pathScan "/api/json/%d" (fun n -> jsonMime >>= OK (jsonText n))
+                  path "/api/xml" >>= xmlMime >>= OK (xmlText 100)
+                  pathScan "/api/xml/%d" (fun n -> xmlMime >>= OK (xmlText n))
                   path "/goodbye" >>= OK "Good bye GET" ]
       POST >>= choose
                 [ path "/hello" >>= OK "Hello POST"
