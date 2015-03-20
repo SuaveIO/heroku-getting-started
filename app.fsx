@@ -77,8 +77,7 @@ let species =
    ("Fish", "Pangasid catfish"); ("Insect (butterfly)", "(butterfly)");
    ("Mammal (cetacean)", "Vaquita (porpoise)");
    ("Plant (tree)", "Type of spruce tree"); ("Plant (tree)", "Qiaojia pine");
-   ("Spider",
-    "Gooty tarantula, metallic tarantula, peacock parachute spider)");
+   ("Spider","Gooty tarantula, metallic tarantula, peacock parachute spider)");
    ("Bird", "Fatuhiva monarch"); ("Fish", "Common sawfish");
    ("Mammal (primate)", "Greater bamboo lemur");
    ("Mammal (primate)", "Silky sifaka");
