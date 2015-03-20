@@ -148,7 +148,7 @@ let animalsText =
 
 let homePage = 
     [ yield """<html>"""
-      yield angularHeader
+      yield angularHeader 
       yield """ <body>"""
       yield """  <table class="table table-striped">"""
       yield """   <thead><tr><th>Category</th><th>Count</th></tr></thead>"""
