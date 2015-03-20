@@ -20,7 +20,10 @@ open Suave.Types
 
 printfn "initializing script..."
 
-type Species = HtmlProvider<"http://en.wikipedia.org/wiki/The_world's_100_most_threatened_species">
+//type Species = HtmlProvider<"http://en.wikipedia.org/wiki/The_world's_100_most_threatened_species">
+//let species = 
+//    [ for x in Species.GetSample().Tables.``Species list``.Rows -> 
+//       x.Type, x.``Common name`` ]
 
 let species = 
   [("Plant (tree)", "Baishan Fir"); ("Insect (butterfly)", "");
@@ -96,8 +99,6 @@ let species =
    ("Mammal (rodent)", "Okinawa spiny rat"); ("Fish", "Somphongs’s rasbora");
    ("Fish", ""); ("Plant", "Forest coconut");
    ("Mammal", "Attenborough’s echidna")]
-//    [ for x in Species.GetSample().Tables.``Species list``.Rows -> 
- //       x.Type, x.``Common name`` ]
 
 let speciesSorted = 
     species 
