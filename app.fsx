@@ -153,8 +153,10 @@ let homePage =
       yield """   <thead><tr><th>Page</th><th>Link</th></tr></thead>"""
       yield """   <tbody>"""
       yield """      <tr><td>Endangered Animals</td><td><a href="/animals">Link to animals</a></td></tr>""" 
-      yield """      <tr><td>API JSON</td><td><a href="/api/json">Link to result</a></td></tr>"""
-      yield """      <tr><td>API XML</td><td><a href="/api/xml">Link to result</a></td></tr>"""
+      yield """      <tr><td>API JSON</td><td><a href="/api/json/100">Link to result (100)</a></td></tr>"""
+      yield """      <tr><td>API XML</td><td><a href="/api/xml/100">Link to result (100)</a></td></tr>"""
+      yield """      <tr><td>API JSON</td><td><a href="/api/json/10">Link to result (100)</a></td></tr>"""
+      yield """      <tr><td>API XML</td><td><a href="/api/xml/10">Link to result (100)</a></td></tr>"""
       yield """      <tr><td>Goodbye</td><td><a href="/goodbye">Link</a></td></tr>"""
       yield """   </tbody>"""
       yield """  </table>"""
@@ -165,33 +167,37 @@ let homePage =
 printfn "starting web server..."
 
 let jsonText n = 
-    sprintf """
+    """
 {"menu": {
   "id": "file",
   "value": "File",
   "popup": {
     "result": [
-      {"value": "%d"},
+""" + String.concat "\n"
+      [ for i in 1 .. n -> sprintf """{"value": "%d"},""" n ] + """
     ]
   }
-}}""" n
+}}""" 
 
 let xmlText n = 
-    sprintf """
+    """
 <menu id="file" value="File">
   <popup>
-    <menuitem value="%d" />
+""" + String.concat "\n"
+      [ for i in 1 .. n -> sprintf """<menuitem value="%d" />""" n ] + """
     <menuitem value="Open" />
     <menuitem value="Close"  />
   </popup>
-</menu>""" n
+</menu>""" 
 
 let app = 
   choose
     [ GET >>= choose
                 [ path "/" >>= OK homePage
                   path "/animals" >>= OK animalsText
+                  path "/api/json" >>= OK (jsonText 100)
                   pathScan "/api/json/%d" (fun n -> OK (jsonText n))
+                  path "/api/xml" >>= OK (xmlText 100)
                   pathScan "/api/xml/%d" (fun n -> OK (xmlText n))
                   path "/goodbye" >>= OK "Good bye GET" ]
       POST >>= choose
