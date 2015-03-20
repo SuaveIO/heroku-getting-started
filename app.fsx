@@ -14,6 +14,8 @@ Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 //
 //open FSharp.Data
 open Suave                 // always open suave
+open Suave.Http
+open Suave.Http.Applicatives
 open Suave.Http.Successful // for OK-result
 open Suave.Web             // for config
 open Suave.Types             
@@ -126,7 +128,25 @@ let angularHeader = """<head>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 </head>"""
 
-let fancyText = 
+let animalsText = 
+    [ yield """<html>"""
+      yield angularHeader
+      yield """ <body>"""
+      yield """ <h1>Sample Web App</h1>"""
+      yield """  <table class="table table-striped">"""
+      yield """   <thead><tr><th>Page</th><th>Link</th></tr></thead>"""
+      yield """   <tbody>"""
+      yield """      <tr><td>Endangered Animals</td><td><a href="/animals">Link to animals</a></td></tr>""" 
+      yield """      <tr><td>API JSON</td><td><a href="/api/json">Link to result</a></td></tr>"""
+      yield """      <tr><td>API XML</td><td><a href="/api/xml">Link to result</a></td></tr>"""
+      yield """      <tr><td>Goodbye</td><td><a href="/goodbye">Link</a></td></tr>"""
+      yield """   </tbody>"""
+      yield """  </table>"""
+      yield """ </body>""" 
+      yield """</html>""" ]
+    |> String.concat "\n"
+
+let homePage = 
     [ yield """<html>"""
       yield angularHeader
       yield """ <body>"""
@@ -143,7 +163,42 @@ let fancyText =
 
 printfn "starting web server..."
 
-startWebServer config (OK fancyText)
+let jsonText n = 
+    sprintf """
+{"menu": {
+  "id": "file",
+  "value": "File",
+  "popup": {
+    "result": [
+      {"value": "%d"},
+    ]
+  }
+}}""" n
+
+let xmlText n = 
+    sprintf """
+<menu id="file" value="File">
+  <popup>
+    <menuitem value="%d" />
+    <menuitem value="Open" />
+    <menuitem value="Close"  />
+  </popup>
+</menu>""" n
+
+let app = 
+  choose
+    [ GET >>= choose
+                [ path "/" >>= OK homePage
+                  path "/animals" >>= OK animalsText
+                  pathScan "/webapi/json/%d" (fun n -> OK (jsonText n))
+                  pathScan "/webapi/xml/%d" (fun n -> OK (xmlText n))
+                  path "/goodbye" >>= OK "Good bye GET" ]
+      POST >>= choose
+                [ path "/hello" >>= OK "Hello POST"
+                  path "/goodbye" >>= OK "Good bye POST" ] ]
+    
+
+startWebServer config app
 printfn "exiting server..."
 
 
