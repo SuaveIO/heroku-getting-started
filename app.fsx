@@ -1,3 +1,4 @@
+(*
 
 //------------------------------------------
 // Step 0. Get the package bootstrap
@@ -25,6 +26,7 @@ Paket.Dependencies.Install """
     nuget FSharp.Charting
 """;;
 
+*)
 
 #r "packages/Suave/lib/net40/Suave.dll"
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
