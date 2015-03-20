@@ -23,8 +23,81 @@ printfn "initializing script..."
 type Species = HtmlProvider<"http://en.wikipedia.org/wiki/The_world's_100_most_threatened_species">
 
 let species = 
-    [ for x in Species.GetSample().Tables.``Species list``.Rows -> 
-        x.Type, x.``Common name`` ]
+  [("Plant (tree)", "Baishan Fir"); ("Insect (butterfly)", "");
+   ("Reptile", "Leaf scaled sea-snake");
+   ("Insect (damselfly)", "Amani flatwing"); ("Bird", "Araripe manakin");
+   ("Insect", "(earwig)"); ("Fish", "Aci Göl toothcarp");
+   ("Mammal (bat)", "Bulmer’s fruit bat"); ("Bird", "White bellied heron");
+   ("Bird", "Great Indian bustard");
+   ("Reptile (tortoise)", "Ploughshare tortoise Angonoka");
+   ("Amphibian (toad)", "Rio Pescado stubfoot toad");
+   ("Bird", "Madagascar pochard"); ("Fish", "Galapagos damsel fish");
+   ("Fish", "Giant yellow croaker");
+   ("Reptile (turtle)", "Common batagur Four-toed terrapin");
+   ("Plant", "(liverwort)"); ("Mammal", "Hirola (antelope)");
+   ("Insect (bee)", "Franklin’s bumblebee");
+   ("Mammal (primate)", "Northern muriqui woolly spider monkey");
+   ("Mammal", "Pygmy three-toed sloth");
+   ("Plant (freshwater)", "(water-starwort)");
+   ("Reptile", "Tarzan’s chameleon");
+   ("Mammal (rodent)", "Santa Catarina’s guinea pig");
+   ("Mammal (primate)", "Roloway guenon (monkey)");
+   ("Mammal (bat)", "Seychelles sheath-tailed bat");
+   ("Fungi", "Willow blister");
+   ("Mammal (shrew)", "Nelson’s small-eared shrew");
+   ("Reptile", "Jamaican iguana Jamaican rock iguana");
+   ("Plant (orchid)", "Cayman Islands ghost orchid");
+   ("Mammal (rhino)", "Sumatran rhino"); ("Bird", "Amsterdam albatross");
+   ("Plant", "Wild yam"); ("Plant (tree)", ""); ("Plant (tree)", "");
+   ("Amphibian (frog)", "Hula painted frog"); ("Plant", "");
+   ("Plant (tree)", ""); ("Amphibian (frog)", "La Hotte glanded frog");
+   ("Amphibian (frog)", "Macaya breast-spot frog");
+   ("Plant", "Chilenito (cactus)"); ("Plant (tree)", "Coral tree");
+   ("Plant (tree)", ""); ("Bird", "Spoon-billed sandpiper"); ("Plant", "");
+   ("Bird", "Northern bald ibis");
+   ("Plant", "(flowering plant in legume family)");
+   ("Mollusc", "(type of gastropod)");
+   ("Amphibian (frog)", "Table mountain ghost frog");
+   ("Mollusc", "(type of land snail)"); ("Bird", "Liben lark");
+   ("Plant (small tree)", ""); ("Fish", "Sakhalin taimen");
+   ("Crustacean", "Singapore freshwater crab");
+   ("Plant",
+    "Belin vetchling (flowering plant related to Lathyrus odoratus"+[13 chars]);
+   ("Amphibian (frog)", "Archey’s frog");
+   ("Amphibian (frog)", "Dusky gopher frog"); ("Bird", "Edwards’s pheasant");
+   ("Plant", "(type of Magnolia tree)");
+   ("Mollusc", "(type of freshwater mussel)"); ("Mollusc", "(snail)");
+   ("Mammal (bat)", "Cuban greater funnel eared bat");
+   ("Plant", "Attenborough’s pitcher plant");
+   ("Mammal (primate)", "Hainan gibbon"); ("Amphibian", "Luristan newt");
+   ("Insect (damselfly)", "Mulanje red damsel (damselfly)");
+   ("Fish", "Pangasid catfish"); ("Insect (butterfly)", "(butterfly)");
+   ("Mammal (cetacean)", "Vaquita (porpoise)");
+   ("Plant (tree)", "Type of spruce tree"); ("Plant (tree)", "Qiaojia pine");
+   ("Spider",
+    "Gooty tarantula, metallic tarantula, peacock parachute spider"+[30 chars]);
+   ("Bird", "Fatuhiva monarch"); ("Fish", "Common sawfish");
+   ("Mammal (primate)", "Greater bamboo lemur");
+   ("Mammal (primate)", "Silky sifaka");
+   ("Reptile (tortoise)", "Geometric tortoise"); ("Mammal", "Saola");
+   ("Plant", ""); ("Insect", "Beydaglari bush-cricket");
+   ("Reptile (turtle)", "Red River giant softshell turtle");
+   ("Mammal (rhino)", "Javan rhino");
+   ("Mammal (primate)", "Tonkin snub-nosed monkey");
+   ("Plant (orchid)", "West Australian underground orchid");
+   ("Mammal (shrew)", "Boni giant sengi");
+   ("Insect (damselfly)", "Cebu frill-wing (damselfly)"); ("Plant", "");
+   ("Mammal", "Durrell’s vontsira (type of mongoose)");
+   ("Mammal (rodent)", "Red crested tree rat");
+   ("Fish", "Red-finned Blue-eye"); ("Fish (shark)", "Angel shark");
+   ("Bird", "Chinese crested tern"); ("Fish", "Estuarine pipefish");
+   ("Plant", "Suicide Palm Dimaka");
+   ("Amphibian (frog)", "Bullock’s false toad");
+   ("Mammal (rodent)", "Okinawa spiny rat"); ("Fish", "Somphongs’s rasbora");
+   ("Fish", ""); ("Plant", "Forest coconut");
+   ("Mammal", "Attenborough’s echidna")]
+//    [ for x in Species.GetSample().Tables.``Species list``.Rows -> 
+ //       x.Type, x.``Common name`` ]
 
 let speciesSorted = 
     species 
