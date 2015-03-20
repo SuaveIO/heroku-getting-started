@@ -10,9 +10,9 @@ Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 #I "packages/Suave/lib/net40"
 #r "packages/Suave/lib/net40/Suave.dll"
 #I "packages/FSharp.Data/lib/net40"
-#r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
-
-open FSharp.Data
+//#r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
+//
+//open FSharp.Data
 open Suave                 // always open suave
 open Suave.Http.Successful // for OK-result
 open Suave.Web             // for config
@@ -65,7 +65,7 @@ let species =
    ("Plant (small tree)", ""); ("Fish", "Sakhalin taimen");
    ("Crustacean", "Singapore freshwater crab");
    ("Plant",
-    "Belin vetchling (flowering plant related to Lathyrus odoratus"+[13 chars]);
+    "Belin vetchling (flowering plant related to Lathyrus odoratus)");
    ("Amphibian (frog)", "Archey’s frog");
    ("Amphibian (frog)", "Dusky gopher frog"); ("Bird", "Edwards’s pheasant");
    ("Plant", "(type of Magnolia tree)");
@@ -78,7 +78,7 @@ let species =
    ("Mammal (cetacean)", "Vaquita (porpoise)");
    ("Plant (tree)", "Type of spruce tree"); ("Plant (tree)", "Qiaojia pine");
    ("Spider",
-    "Gooty tarantula, metallic tarantula, peacock parachute spider"+[30 chars]);
+    "Gooty tarantula, metallic tarantula, peacock parachute spider)");
    ("Bird", "Fatuhiva monarch"); ("Fish", "Common sawfish");
    ("Mammal (primate)", "Greater bamboo lemur");
    ("Mammal (primate)", "Silky sifaka");
