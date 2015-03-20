@@ -144,6 +144,22 @@ let animalsText =
       yield """</html>""" ]
     |> String.concat "\n"
 
+let thingsText n = 
+    [ yield """<html>"""
+      yield angularHeader
+      yield """ <body>"""
+      yield """ <h1>Endangered Animals</h1>"""
+      yield """  <table class="table table-striped">"""
+      yield """   <thead><tr><th>Thing</th><th>Value</th></tr></thead>"""
+      yield """   <tbody>"""
+      for i in 1 .. n do
+         yield sprintf "<tr><td>Thing %d</td><td>%d</td></tr>" n n 
+      yield """   </tbody>"""
+      yield """  </table>"""
+      yield """ </body>""" 
+      yield """</html>""" ]
+    |> String.concat "\n"
+
 let homePage = 
     [ yield """<html>"""
       yield angularHeader 
@@ -155,8 +171,8 @@ let homePage =
       yield """      <tr><td>Endangered Animals</td><td><a href="/animals">Link to animals</a></td></tr>""" 
       yield """      <tr><td>API JSON</td><td><a href="/api/json/100">Link to result (100)</a></td></tr>"""
       yield """      <tr><td>API XML</td><td><a href="/api/xml/100">Link to result (100)</a></td></tr>"""
-      yield """      <tr><td>API JSON</td><td><a href="/api/json/10">Link to result (100)</a></td></tr>"""
-      yield """      <tr><td>API XML</td><td><a href="/api/xml/10">Link to result (100)</a></td></tr>"""
+      yield """      <tr><td>API JSON</td><td><a href="/api/json/10">Link to result (10)</a></td></tr>"""
+      yield """      <tr><td>API XML</td><td><a href="/api/xml/10">Link to result (10)</a></td></tr>"""
       yield """      <tr><td>Goodbye</td><td><a href="/goodbye">Link</a></td></tr>"""
       yield """   </tbody>"""
       yield """  </table>"""
@@ -174,7 +190,7 @@ let jsonText n =
   "popup": {
     "result": [
 """ + String.concat "\n"
-      [ for i in 1 .. n -> sprintf """{"value": "%d"},""" n ] + """
+      [ for i in 1 .. n -> sprintf """{"value": "%d"},""" i ] + """
     ]
   }
 }}""" 
@@ -184,7 +200,7 @@ let xmlText n =
 <menu id="file" value="File">
   <popup>
 """ + String.concat "\n"
-      [ for i in 1 .. n -> sprintf """<menuitem value="%d" />""" n ] + """
+      [ for i in 1 .. n -> sprintf """<menuitem value="%d" />""" i ] + """
     <menuitem value="Open" />
     <menuitem value="Close"  />
   </popup>
@@ -195,6 +211,7 @@ let app =
     [ GET >>= choose
                 [ path "/" >>= OK homePage
                   path "/animals" >>= OK animalsText
+                  pathScan "/things/%d" (fun n -> OK (thingsText n))
                   path "/api/json" >>= OK (jsonText 100)
                   pathScan "/api/json/%d" (fun n -> OK (jsonText n))
                   path "/api/xml" >>= OK (xmlText 100)
