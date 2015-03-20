@@ -28,6 +28,7 @@ Paket.Dependencies.Install """
 
 *)
 
+printfn "starting..."
 #r "packages/Suave/lib/net40/Suave.dll"
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 //#r "packages/FSharp.Charting/lib/net40/FSharp.Charting.dll"
@@ -41,7 +42,11 @@ open Suave.Http.Successful // for OK-result
 open Suave.Web             // for config
 open Suave.Types             
 
-//let config8084 = { defaultConfig with bindings=[ HttpBinding.mk' HTTP  "localhost" 8080 ] }
+let config = 
+    { defaultConfig with 
+        logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
+        bindings=[ HttpBinding.mk' HTTP  "0.0.0.0" 5000 ] }
+
 //let startWebServer c rsp = async { do webServer c rsp } |> Async.Start
 
 
@@ -66,7 +71,11 @@ let fancyText =
       yield """</html>""" ]
     |> String.concat "\n"
 
+printfn "starting server..."
+eprintfn "starting server (err)..."
 
-startWebServer defaultConfig (OK fancyText)
+startWebServer config (OK fancyText)
+printfn "exiting server..."
+eprintfn "exiting server (err)..."
 
 
