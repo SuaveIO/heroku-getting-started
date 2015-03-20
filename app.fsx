@@ -29,7 +29,9 @@ Paket.Dependencies.Install """
 *)
 
 printfn "starting..."
+#I "packages/Suave/lib/net40"
 #r "packages/Suave/lib/net40/Suave.dll"
+#I "packages/FSharp.Data/lib/net40"
 #r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
 //#r "packages/FSharp.Charting/lib/net40/FSharp.Charting.dll"
 
