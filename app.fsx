@@ -112,7 +112,7 @@ let config =
     let port = System.Environment.GetEnvironmentVariable("PORT")
     { defaultConfig with 
         logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
-        bindings=[ (if port = null then HttpBinding.mk' HTTP  "localhost" 8080
+        bindings=[ (if port = null then HttpBinding.mk' HTTP  "127.0.0.1" 8080
                     else HttpBinding.mk' HTTP  "0.0.0.0" (int32 port)) ] }
 
 let text = 
@@ -168,6 +168,8 @@ let homePage =
       yield """   <thead><tr><th>Page</th><th>Link</th></tr></thead>"""
       yield """   <tbody>"""
       yield """      <tr><td>Endangered Animals</td><td><a href="/animals">Link to animals</a></td></tr>""" 
+      yield """      <tr><td>Things</td><td><a href="/things/10">Link to things (10)</a></td></tr>""" 
+      yield """      <tr><td>Things</td><td><a href="/things/100">Link to things (100)</a></td></tr>""" 
       yield """      <tr><td>API JSON</td><td><a href="/api/json/100">Link to result (100)</a></td></tr>"""
       yield """      <tr><td>API XML</td><td><a href="/api/xml/100">Link to result (100)</a></td></tr>"""
       yield """      <tr><td>API JSON</td><td><a href="/api/json/10">Link to result (10)</a></td></tr>"""
