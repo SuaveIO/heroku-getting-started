@@ -1,1 +1,1 @@
-web: vendor/mono/bin/fsharpi app.fsx
+web: mono vendor/mono/lib/mono/4.5/fsi.exe app.fsx
