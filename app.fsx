@@ -9,10 +9,7 @@ Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 
 #I "packages/Suave/lib/net40"
 #r "packages/Suave/lib/net40/Suave.dll"
-//#I "packages/FSharp.Data/lib/net40"
-//#r "packages/FSharp.Data/lib/net40/FSharp.Data.dll"
-//
-//open FSharp.Data
+
 open Suave                 // always open suave
 open Suave.Http
 open Suave.Http.Applicatives
@@ -22,17 +19,12 @@ open Suave.Types
 
 printfn "initializing script..."
 
-//type Species = HtmlProvider<"http://en.wikipedia.org/wiki/The_world's_100_most_threatened_species">
-//let species = 
-//    [ for x in Species.GetSample().Tables.``Species list``.Rows -> 
-//       x.Type, x.``Common name`` ]
-
 let species = 
   [("Plant (tree)", "Baishan Fir"); ("Insect (butterfly)", "");
    ("Reptile", "Leaf scaled sea-snake");
    ("Insect (damselfly)", "Amani flatwing"); ("Bird", "Araripe manakin");
-   ("Insect", "(earwig)"); ("Fish", "Aci Göl toothcarp");
-   ("Mammal (bat)", "Bulmer’s fruit bat"); ("Bird", "White bellied heron");
+   ("Insect", "(earwig)"); ("Fish", "Aci GÃ¶l toothcarp");
+   ("Mammal (bat)", "Bulmerâ€™s fruit bat"); ("Bird", "White bellied heron");
    ("Bird", "Great Indian bustard");
    ("Reptile (tortoise)", "Ploughshare tortoise Angonoka");
    ("Amphibian (toad)", "Rio Pescado stubfoot toad");
@@ -40,16 +32,16 @@ let species =
    ("Fish", "Giant yellow croaker");
    ("Reptile (turtle)", "Common batagur Four-toed terrapin");
    ("Plant", "(liverwort)"); ("Mammal", "Hirola (antelope)");
-   ("Insect (bee)", "Franklin’s bumblebee");
+   ("Insect (bee)", "Franklinâ€™s bumblebee");
    ("Mammal (primate)", "Northern muriqui woolly spider monkey");
    ("Mammal", "Pygmy three-toed sloth");
    ("Plant (freshwater)", "(water-starwort)");
-   ("Reptile", "Tarzan’s chameleon");
-   ("Mammal (rodent)", "Santa Catarina’s guinea pig");
+   ("Reptile", "Tarzanâ€™s chameleon");
+   ("Mammal (rodent)", "Santa Catarinaâ€™s guinea pig");
    ("Mammal (primate)", "Roloway guenon (monkey)");
    ("Mammal (bat)", "Seychelles sheath-tailed bat");
    ("Fungi", "Willow blister");
-   ("Mammal (shrew)", "Nelson’s small-eared shrew");
+   ("Mammal (shrew)", "Nelsonâ€™s small-eared shrew");
    ("Reptile", "Jamaican iguana Jamaican rock iguana");
    ("Plant (orchid)", "Cayman Islands ghost orchid");
    ("Mammal (rhino)", "Sumatran rhino"); ("Bird", "Amsterdam albatross");
@@ -68,12 +60,12 @@ let species =
    ("Crustacean", "Singapore freshwater crab");
    ("Plant",
     "Belin vetchling (flowering plant related to Lathyrus odoratus)");
-   ("Amphibian (frog)", "Archey’s frog");
-   ("Amphibian (frog)", "Dusky gopher frog"); ("Bird", "Edwards’s pheasant");
+   ("Amphibian (frog)", "Archeyâ€™s frog");
+   ("Amphibian (frog)", "Dusky gopher frog"); ("Bird", "Edwardsâ€™s pheasant");
    ("Plant", "(type of Magnolia tree)");
    ("Mollusc", "(type of freshwater mussel)"); ("Mollusc", "(snail)");
    ("Mammal (bat)", "Cuban greater funnel eared bat");
-   ("Plant", "Attenborough’s pitcher plant");
+   ("Plant", "Attenboroughâ€™s pitcher plant");
    ("Mammal (primate)", "Hainan gibbon"); ("Amphibian", "Luristan newt");
    ("Insect (damselfly)", "Mulanje red damsel (damselfly)");
    ("Fish", "Pangasid catfish"); ("Insect (butterfly)", "(butterfly)");
@@ -91,15 +83,15 @@ let species =
    ("Plant (orchid)", "West Australian underground orchid");
    ("Mammal (shrew)", "Boni giant sengi");
    ("Insect (damselfly)", "Cebu frill-wing (damselfly)"); ("Plant", "");
-   ("Mammal", "Durrell’s vontsira (type of mongoose)");
+   ("Mammal", "Durrellâ€™s vontsira (type of mongoose)");
    ("Mammal (rodent)", "Red crested tree rat");
    ("Fish", "Red-finned Blue-eye"); ("Fish (shark)", "Angel shark");
    ("Bird", "Chinese crested tern"); ("Fish", "Estuarine pipefish");
    ("Plant", "Suicide Palm Dimaka");
-   ("Amphibian (frog)", "Bullock’s false toad");
-   ("Mammal (rodent)", "Okinawa spiny rat"); ("Fish", "Somphongs’s rasbora");
+   ("Amphibian (frog)", "Bullockâ€™s false toad");
+   ("Mammal (rodent)", "Okinawa spiny rat"); ("Fish", "Somphongsâ€™s rasbora");
    ("Fish", ""); ("Plant", "Forest coconut");
-   ("Mammal", "Attenborough’s echidna")]
+   ("Mammal", "Attenboroughâ€™s echidna")]
 
 let speciesSorted = 
     species 
