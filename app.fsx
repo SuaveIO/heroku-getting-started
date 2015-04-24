@@ -10,6 +10,7 @@ Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 #I "packages/Suave/lib/net40"
 #r "packages/Suave/lib/net40/Suave.dll"
 
+open System
 open Suave                 // always open suave
 open Suave.Http
 open Suave.Http.Applicatives
