@@ -1,1 +1,1 @@
-web: /app/mono/bin/fsharpi app.fsx
+web: fsharpi app.fsx
