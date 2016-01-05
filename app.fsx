@@ -104,8 +104,8 @@ let speciesSorted =
 
 let config = 
     let port = System.Environment.GetEnvironmentVariable("PORT")
-    let ip127  = [|127; 0; 0; 1|] |> Array.map byte |> fun b -> IPAddress(b)
-    let ipZero = [|0  ; 0; 0; 0|] |> Array.map byte |> fun b -> IPAddress(b)
+    let ip127  = IPAddress.Parse("127.0.0.1")
+    let ipZero = IPAddress.Parse("0.0.0.0")
 
     { defaultConfig with 
         logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
