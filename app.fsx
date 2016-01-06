@@ -1,6 +1,6 @@
 #if BOOTSTRAP
 System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-if not (System.IO.File.Exists "paket.exe") then let url = "https://github.com/fsprojects/Paket/releases/download/0.27.2/paket.exe" in use wc = new System.Net.WebClient() in let tmp = System.IO.Path.GetTempFileName() in wc.DownloadFile(url, tmp); System.IO.File.Move(tmp,System.IO.Path.GetFileName url);;
+if not (System.IO.File.Exists "paket.exe") then let url = "https://github.com/fsprojects/Paket/releases/download/2.40.9/paket.exe" in use wc = new System.Net.WebClient() in let tmp = System.IO.Path.GetTempFileName() in wc.DownloadFile(url, tmp); System.IO.File.Move(tmp,System.IO.Path.GetFileName url);;
 #r "paket.exe"
 Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 #endif
@@ -13,10 +13,11 @@ Paket.Dependencies.Install (System.IO.File.ReadAllText "paket.dependencies")
 open System
 open Suave                 // always open suave
 open Suave.Http
-open Suave.Http.Applicatives
-open Suave.Http.Successful // for OK-result
+open Suave.Filters
+open Suave.Successful // for OK-result
 open Suave.Web             // for config
-open Suave.Types             
+open System.Net
+open Suave.Operators 
 
 printfn "initializing script..."
 
@@ -103,10 +104,13 @@ let speciesSorted =
 
 let config = 
     let port = System.Environment.GetEnvironmentVariable("PORT")
+    let ip127  = IPAddress.Parse("127.0.0.1")
+    let ipZero = IPAddress.Parse("0.0.0.0")
+
     { defaultConfig with 
         logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
-        bindings=[ (if port = null then HttpBinding.mk' HTTP  "127.0.0.1" 8080
-                    else HttpBinding.mk' HTTP  "0.0.0.0" (int32 port)) ] }
+        bindings=[ (if port = null then HttpBinding.mk HTTP ip127 (uint16 8080)
+                    else HttpBinding.mk HTTP ipZero (uint16 port)) ] }
 
 let text = 
     [ yield "<html><body><ul>"
@@ -204,18 +208,18 @@ let xmlMime = Writers.setMimeType "application/xml"
 let jsonMime = Writers.setMimeType "application/json"
 let app = 
   choose
-    [ GET >>= choose
-                [ path "/" >>= OK homePage
-                  path "/animals" >>= OK animalsText
+    [ GET >=> choose
+                [ path "/" >=> OK homePage
+                  path "/animals" >=> OK animalsText
                   pathScan "/things/%d" (fun n -> OK (thingsText n))
-                  path "/api/json" >>= jsonMime >>= OK (jsonText 100)
-                  pathScan "/api/json/%d" (fun n -> jsonMime >>= OK (jsonText n))
-                  path "/api/xml" >>= xmlMime >>= OK (xmlText 100)
-                  pathScan "/api/xml/%d" (fun n -> xmlMime >>= OK (xmlText n))
-                  path "/goodbye" >>= OK "Good bye GET" ]
-      POST >>= choose
-                [ path "/hello" >>= OK "Hello POST"
-                  path "/goodbye" >>= OK "Good bye POST" ] ]
+                  path "/api/json" >=> jsonMime >=> OK (jsonText 100)
+                  pathScan "/api/json/%d" (fun n -> jsonMime >=> OK (jsonText n))
+                  path "/api/xml" >=> xmlMime >=> OK (xmlText 100)
+                  pathScan "/api/xml/%d" (fun n -> xmlMime >=> OK (xmlText n))
+                  path "/goodbye" >=> OK "Good bye GET" ]
+      POST >=> choose
+                [ path "/hello" >=> OK "Hello POST"
+                  path "/goodbye" >=> OK "Good bye POST" ] ]
     
 
 startWebServer config app
